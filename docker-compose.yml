@@ -1,0 +1,28 @@
+services:
+  db:
+    container_name: postgres
+    image: postgres
+    environment:
+      POSTGRES_USER: stefan
+      POSTGRES_PASSWORD: postgres
+      PGDATA: data/postgres
+
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U stefan" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+    volumes:
+      - db:/data/postgres
+    ports:
+      - "5332:5432"
+    networks:
+      - db
+    restart: unless-stopped
+networks:
+  db:
+    driver: bridge
+
+volumes:
+  db:
