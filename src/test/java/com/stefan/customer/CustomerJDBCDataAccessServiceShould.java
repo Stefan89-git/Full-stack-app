@@ -6,7 +6,6 @@ import com.stefan.AssertUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,6 +24,9 @@ class CustomerJDBCDataAccessServiceShould extends AbstractTestcontainers {
                 getJdbcTemplate(),
                 customerMapper
         );
+        if (underTest.getAllCustomers() != null && underTest.getAllCustomers().size() > 0) {
+            underTest.getAllCustomers().forEach(customer -> underTest.delete(customer.getId()));
+        }
     }
 
     @Test
@@ -83,7 +85,6 @@ class CustomerJDBCDataAccessServiceShould extends AbstractTestcontainers {
         Customer customer = createRandomCustomer();
         customer = underTest.create(customer);
         assertTrue(underTest.getAllCustomers().contains(customer));
-        List<Customer> allCustomers = underTest.getAllCustomers();
 
         underTest.delete(customer.getId());
         assertFalse(underTest.getAllCustomers().contains(customer));

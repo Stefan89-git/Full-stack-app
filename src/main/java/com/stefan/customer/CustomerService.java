@@ -1,12 +1,13 @@
 package com.stefan.customer;
 
 import com.stefan.exception.DuplicateResourceException;
-import com.stefan.exception.RequestValidationException;
 import com.stefan.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static com.stefan.util.CustomValidation.setIfNotNull;
 
 @Service
 public class CustomerService {
@@ -14,7 +15,7 @@ public class CustomerService {
     private final CustomerDao customerDao;
     private final CustomerMapper customerMapper;
 
-    public CustomerService(@Qualifier("jdbc") CustomerDao customerDao, CustomerMapper customerMapper) {
+    public CustomerService(@Qualifier("jpa") CustomerDao customerDao, CustomerMapper customerMapper) {
         this.customerDao = customerDao;
         this.customerMapper = customerMapper;
     }
@@ -36,22 +37,21 @@ public class CustomerService {
     public CustomerDto createCustomer(CustomerDto customerDto) {
         throwErrorIfEmailExists(customerDto.getEmail());
         Customer customer = toEntity(customerDto);
-        customerDao.create(customer);
+        customer = customerDao.create(customer);
         return toDto(customer);
     }
 
     public CustomerDto updateCustomer(Integer customerId, CustomerDto customerDto) {
         CustomerDto dto = getCustomer(customerId);
-        throwErrorIfEmailExists(customerDto.getEmail());
-        if (dto.equals(customerDto)) {
-            throw new RequestValidationException("There have been no changes!");
+        if (customerDto.getEmail() != null && !dto.getEmail().equals(customerDto.getEmail())) {
+            throwErrorIfEmailExists(customerDto.getEmail());
+            dto.setEmail(customerDto.getEmail());
         }
-        dto.setName(customerDto.getName());
-        dto.setEmail(customerDto.getEmail());
-        dto.setAge(customerDto.getAge());
+        dto.setName(setIfNotNull(dto.getName(), customerDto.getName()));
+        dto.setAge(setIfNotNull(dto.getAge(), customerDto.getAge()));
         Customer customer = toEntity(dto);
-        customerDao.update(customer);
-        return dto;
+        Customer updated = customerDao.update(customer);
+        return toDto(updated);
     }
 
     public void deleteCustomer(Integer id) {
