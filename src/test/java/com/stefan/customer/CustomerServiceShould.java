@@ -43,11 +43,11 @@ class CustomerServiceShould extends AbstractTestcontainers {
             when(customerMapper.toDto(customer)).thenReturn(toDto(customer));
         });
         List<CustomerDto> allCustomers = underTest.getAllCustomers();
-        List<CustomerDto> customerDtos = customers.stream()
+        List<CustomerDto> customerDtoList = customers.stream()
                 .map(this::toDto)
                 .toList();
 
-        assertTrue(allCustomers.containsAll(customerDtos));
+        assertTrue(allCustomers.containsAll(customerDtoList));
         assertEquals(2, allCustomers.size());
     }
 
@@ -62,7 +62,7 @@ class CustomerServiceShould extends AbstractTestcontainers {
     }
 
     @Test
-    void throwErrorIfCustomerNotExists() {
+    void throwErrorWhenCustomerDoNotExists() {
         assertThrows(ResourceNotFoundException.class, () -> underTest.getCustomer(-1));
     }
 
@@ -82,21 +82,41 @@ class CustomerServiceShould extends AbstractTestcontainers {
     }
 
     @Test
+    void throwErrorWhenTryingToCreateCustomerWithExistingEmail() {
+        CustomerDto customerDto = toDto(createRandomCustomer());
+
+        when(customerDao.existsByEmail(customerDto.getEmail())).thenReturn(true);
+        assertThrows(DuplicateResourceException.class, () -> underTest.createCustomer(customerDto));
+        verify(customerDao, never()).create(any());
+    }
+
+    @Test
     void updateCustomer() {
         CustomerDto customerDto = toDto(createRandomCustomer());
         Customer customer = createRandomCustomer();
         when(customerDao.getCustomer(1)).thenReturn(Optional.of(customer));
         when(customerMapper.toDto(customer)).thenReturn(toDto(customer));
 
-        CustomerDto dto = underTest.getCustomer(1);
-
-        when(customerMapper.toEntity(dto)).thenReturn(toEntity(dto));
-        when(customerDao.update(toEntity(dto))).thenReturn(toEntity(dto));
-        when(customerMapper.toDto(toEntity(dto))).thenReturn(dto);
+        when(customerMapper.toEntity(customerDto)).thenReturn(toEntity(customerDto));
+        when(customerDao.update(toEntity(customerDto))).thenReturn(toEntity(customerDto));
+        when(customerMapper.toDto(toEntity(customerDto))).thenReturn(customerDto);
 
         CustomerDto updated = underTest.updateCustomer(1, customerDto);
         assertEquals(customerDto, updated);
     }
+
+    @Test
+    void throwErrorWhenTryingToUpdateCustomerWithExistingEmail() {
+        CustomerDto customerDto = toDto(createRandomCustomer());
+        Customer customer = createRandomCustomer();
+        when(customerDao.getCustomer(1)).thenReturn(Optional.of(customer));
+        when(customerMapper.toDto(customer)).thenReturn(toDto(customer));
+
+        when(customerDao.existsByEmail(customerDto.getEmail())).thenReturn(true);
+        assertThrows(DuplicateResourceException.class, () -> underTest.updateCustomer(1, customerDto));
+        verify(customerDao, never()).update(any());
+    }
+
 
     @Test
     void deleteCustomer() {
