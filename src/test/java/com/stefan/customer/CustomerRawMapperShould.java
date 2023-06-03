@@ -17,16 +17,16 @@ class CustomerRawMapperShould {
         ResultSet resultSet = mock(ResultSet.class);
 
         when(resultSet.getInt("id")).thenReturn(1);
-        when(resultSet.getInt("age")).thenReturn(20);
-        when(resultSet.getString("name")).thenReturn("Pera");
-        when(resultSet.getString("email")).thenReturn("pera@gmail.com");
+        when(resultSet.getInt("age")).thenReturn(25);
+        when(resultSet.getString("name")).thenReturn("John Doe");
+        when(resultSet.getString("email")).thenReturn("john@example.com");
 
         Customer actual = customerRawMapper.mapRow(resultSet, 1);
         Customer expected = Customer.builder()
                 .id(1)
-                .name("Pera")
-                .email("pera@gmail.com")
-                .age(20)
+                .name("John Doe")
+                .email("john@example.com")
+                .age(25)
                 .build();
 
         assertEquals(actual, expected);
