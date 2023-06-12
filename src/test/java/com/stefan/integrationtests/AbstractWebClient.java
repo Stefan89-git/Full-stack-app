@@ -1,6 +1,6 @@
-package com.stefan.integrationTests;
+package com.stefan.integrationtests;
 
-import com.stefan.integrationTests.util.CustomWebTestClient;
+import com.stefan.integrationtests.util.CustomWebTestClient;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;

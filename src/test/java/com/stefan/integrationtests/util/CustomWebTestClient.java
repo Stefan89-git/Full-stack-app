@@ -1,4 +1,4 @@
-package com.stefan.integrationTests.util;
+package com.stefan.integrationtests.util;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;

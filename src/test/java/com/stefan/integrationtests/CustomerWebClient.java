@@ -1,7 +1,7 @@
-package com.stefan.integrationTests;
+package com.stefan.integrationtests;
 
 import com.stefan.customer.CustomerDto;
-import com.stefan.integrationTests.util.CustomWebTestClient;
+import com.stefan.integrationtests.util.CustomWebTestClient;
 import org.springframework.stereotype.Component;
 
 @Component

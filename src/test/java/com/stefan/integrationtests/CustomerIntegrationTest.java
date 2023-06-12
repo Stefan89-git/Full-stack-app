@@ -1,4 +1,4 @@
-package com.stefan.integrationTests;
+package com.stefan.integrationtests;
 
 import com.github.javafaker.Faker;
 import com.stefan.customer.CustomerDto;
