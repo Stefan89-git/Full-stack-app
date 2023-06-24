@@ -12,15 +12,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @NoArgsConstructor(access = PRIVATE)
 public class AssertUtil {
 
-    public static <T> void assertEquals(T expected, T actual, String... excludeFields) {
-        ReflectionEquals reflectionEquals = new ReflectionEquals(expected, excludeFields);
+    public static <T> void assertEquals(T expected, T actual, String... excludedFields) {
+        ReflectionEquals reflectionEquals = new ReflectionEquals(expected, excludedFields);
         assertTrue(reflectionEquals.matches(actual));
     }
 
-    public static <T> void assertCollectionsEquals(List<T> expected, List<T> actual, String... excludeFields) {
+    public static <T> void assertCollectionsEquals(List<T> expected, List<T> actual, String... excludedFields) {
         Assertions.assertEquals(expected.size(), actual.size());
         for (int i = 0; i < expected.size(); i++) {
-            assertEquals(expected.get(i), actual.get(i), excludeFields);
+            assertEquals(expected.get(i), actual.get(i), excludedFields);
         }
     }
 }
